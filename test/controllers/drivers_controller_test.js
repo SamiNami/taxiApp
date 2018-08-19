@@ -1,15 +1,22 @@
 const assert = require('assert');
 const request = require('supertest');
+const mongoose = require('mongoose');
 const app = require('../../app');
 
-describe('Drivers Controller', () => {
-    it('post to /api/drivers creates a new driver', done => {
-        request(app)
-            .post('/api/drivers')
-            .send({ email: 'test@test.com' })
-            .end((err, response) => {
-                assert(response.body.Hello === 'Kappa');
-                done();
-            });
+const Driver = mongoose.model('driver');
+
+describe('Drivers controller', () => {
+    it('Post to /api/drivers creates a new driver', done => {
+        Driver.count().then(count => {
+            request(app)
+                .post('/api/drivers')
+                .send({ email: 'test@test.com' })
+                .end(() => {
+                    Driver.count().then(newCount => {
+                        assert(count + 1 === newCount);
+                        done();
+                    });
+                });
+        });
     });
 });
