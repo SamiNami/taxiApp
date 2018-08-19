@@ -19,4 +19,39 @@ describe('Drivers controller', () => {
                 });
         });
     });
+
+    it('Put to /api/drivers edits a new driver', done => {
+        Driver.create({ email: 'kappa@gmail.com', driving: false }).then(
+            driver => {
+                request(app)
+                    .put(`/api/drivers/${driver.id}`)
+                    .send({ driving: true })
+                    .end(() => {
+                        Driver.findOne({ email: 'kappa@gmail.com' }).then(
+                            driver => {
+                                assert(driver.driving === true);
+                                done();
+                            }
+                        );
+                    });
+            }
+        );
+    });
+
+    it('Delete to /api/drivers deltes a driver', done => {
+        Driver.create({ email: 'kappa@gmail.com', driving: false }).then(
+            driver => {
+                request(app)
+                    .delete(`/api/drivers/${driver.id}`)
+                    .end(() => {
+                        Driver.findOne({ email: 'kappa@gmail.com' }).then(
+                            driver => {
+                                assert(driver === null);
+                                done();
+                            }
+                        );
+                    });
+            }
+        );
+    });
 });

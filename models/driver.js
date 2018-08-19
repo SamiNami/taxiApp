@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const DriverSchema = new Schema({
     email: { type: String, required: true },
-    driving: { type: String, default: false }
+    driving: { type: Boolean, default: false }
 });
 
 const Driver = mongoose.model('driver', DriverSchema);
