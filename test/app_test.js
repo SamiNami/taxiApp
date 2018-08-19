@@ -5,9 +5,10 @@ const app = require('../app');
 describe('The express app', () => {
     it('handles a Get request to /api', done => {
         request(app)
-        .get('/api')
-        .end((err, response) => {
-
-        });
+            .get('/api')
+            .end((err, response) => {
+                assert(response.body.Hello === 'Kappa');
+                done();
+            });
     });
 });
