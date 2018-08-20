@@ -5,6 +5,20 @@ module.exports = {
         res.send({ Hello: 'Kappa' });
     },
 
+    index(req, res, next) {
+        const { lng, lang } = req.query;
+
+        Driver.geoNear(
+            { type: 'Point', coordinates: [lng, lat] },
+            // asume a sphere and the max distance is 200km
+            { spherical: true, maxDistance: 200000 }
+        )
+            .then(drivers => {
+                res.send(drivers);
+            })
+            .catch(next);
+    },
+
     create(req, res, next) {
         const driverProps = req.body;
 
@@ -23,6 +37,7 @@ module.exports = {
             .then(driver => res.send(driver))
             .catch(next);
     },
+
     delete(req, res, next) {
         const driverId = req.params.id;
         Driver.findByIdAndRemove(driverId)

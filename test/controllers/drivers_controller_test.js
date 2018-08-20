@@ -54,4 +54,21 @@ describe('Drivers controller', () => {
             }
         );
     });
+
+    it('GET to /api/drivers finds drivers around geolocation', done => {
+        Driver.create({ email: 'kappa@gmail.com', driving: false }).then(
+            driver => {
+                request(app)
+                    .delete(`/api/drivers/${driver.id}`)
+                    .end(() => {
+                        Driver.findOne({ email: 'kappa@gmail.com' }).then(
+                            driver => {
+                                assert(driver === null);
+                                done();
+                            }
+                        );
+                    });
+            }
+        );
+    });
 });
