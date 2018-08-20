@@ -56,19 +56,24 @@ describe('Drivers controller', () => {
     });
 
     it('GET to /api/drivers finds drivers around geolocation', done => {
-        Driver.create({ email: 'kappa@gmail.com', driving: false }).then(
-            driver => {
-                request(app)
-                    .delete(`/api/drivers/${driver.id}`)
-                    .end(() => {
-                        Driver.findOne({ email: 'kappa@gmail.com' }).then(
-                            driver => {
-                                assert(driver === null);
-                                done();
-                            }
-                        );
-                    });
-            }
+        const seattleDriver = Driver.create({
+            email: 'seattle@gmail.com',
+            driving: false,
+            geometry: { type: 'Point', coordinates: [-122, 47.6] }
+        });
+        const miamiDriver = Driver.create({
+            email: 'miami@gmail.com',
+            driving: false,
+            geometry: { type: 'Point', coordinates: [-80, 25.7] }
+        });
+
+        Promise.all([seattleDriver, miamiDriver]).then(
+            request(app)
+                .get('/api/drivers?lng=-80&lat=25')
+                .end((err, response) => {
+                    console.log(response);
+                    done();
+                })
         );
     });
 });
