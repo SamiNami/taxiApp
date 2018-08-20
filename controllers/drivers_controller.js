@@ -6,13 +6,21 @@ module.exports = {
     },
 
     index(req, res, next) {
-        const { lng, lang } = req.query;
+        const { lng, lat } = req.query;
 
-        Driver.geoNear(
-            { type: 'Point', coordinates: [lng, lat] },
-            // asume a sphere and the max distance is 200km
-            { spherical: true, maxDistance: 200000 }
-        )
+        Driver.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: 'Point',
+                        coordinates: [parseFloat(lng), parseFloat(lat)]
+                    },
+                    distanceField: 'dist.calculated',
+                    maxDistance: 200000,
+                    spherical: true
+                }
+            }
+        ])
             .then(drivers => {
                 res.send(drivers);
             })
